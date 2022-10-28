@@ -11,6 +11,7 @@ type Repository struct {
 	selectRentalByIDStmt *sql.Stmt
 }
 
+// NewRepository is a constructor function
 func NewRepository(db *sql.DB) (*Repository, error) {
 	selectRentalByIDStmt, err := db.Prepare(selectRentalByID)
 	if err != nil {
@@ -23,6 +24,7 @@ func NewRepository(db *sql.DB) (*Repository, error) {
 	}, nil
 }
 
+// RetrieveRentalByID retrieves rental by a given id from repository
 func (r *Repository) RetrieveRentalByID(ctx context.Context, id string) (Model, error) {
 	row := r.selectRentalByIDStmt.QueryRowContext(ctx, id)
 	var rental Model
@@ -55,6 +57,7 @@ func (r *Repository) RetrieveRentalByID(ctx context.Context, id string) (Model, 
 	return rental, nil
 }
 
+// Close closes statements for repository
 func (r *Repository) Close() error {
 	if err := r.selectRentalByIDStmt.Close(); err != nil {
 		return fmt.Errorf("failed to close select rental by id statement: %w", err)
