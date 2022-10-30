@@ -3,32 +3,40 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nvasilev98/rentals/cmd/rentals/env"
 	"github.com/nvasilev98/rentals/cmd/rentals/internal/rentals"
 	"github.com/nvasilev98/rentals/pkg/repository/postgres"
 	r "github.com/nvasilev98/rentals/pkg/repository/postgres/rentals"
+	"github.com/sirupsen/logrus"
 )
 
+const timeout = 1000000
+
 func main() {
-	config, err := postgres.LoadDBConfig()
+	appConfig, err := env.LoadAppConfig()
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
-	dbClient, err := postgres.Connect(config)
+	dbConfig, err := postgres.LoadDBConfig()
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
+	}
+
+	dbClient, err := postgres.Connect(dbConfig)
+	if err != nil {
+		logrus.Fatal(err)
 	}
 
 	rentalsRepository, err := r.NewRepository(dbClient)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	handler := gin.Default()
@@ -38,14 +46,14 @@ func main() {
 	handler.GET("/rentals", presenter.RetrieveRentals)
 
 	httpServer := &http.Server{
-		Addr:    fmt.Sprintf(":%d", 8080),
+		Addr:    fmt.Sprintf("%s:%d", appConfig.Host, appConfig.Port),
 		Handler: handler,
 	}
 
 	go func() {
 		if err := httpServer.ListenAndServe(); err != http.ErrServerClosed {
 			if err != nil {
-				log.Fatal(err)
+				logrus.Fatal(err)
 			}
 		}
 	}()
@@ -58,14 +66,14 @@ func main() {
 	<-sigChan
 	signal.Stop(sigChan)
 
-	shutdownCtx, shutdownCancelFunc := context.WithTimeout(context.Background(), 1000000)
+	shutdownCtx, shutdownCancelFunc := context.WithTimeout(context.Background(), timeout)
 	defer shutdownCancelFunc()
 	if err := httpServer.Shutdown(shutdownCtx); err != nil {
-		log.Fatal("failed to gracefully shutdown http server")
+		logrus.Fatal("failed to gracefully shutdown http server")
 	}
 
 	if err := rentalsRepository.Close(); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 }

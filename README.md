@@ -5,10 +5,14 @@
 make unit-tests
 ```
 
-### Run application locally from root directory
+### Run application locally
 1. Export Env Variables
 
     ```bash
+    export HOST=<host>
+
+    export PORT=<port>
+
     export DB_HOST=<db-host>
 
     export DB_PORT=<db-port>
