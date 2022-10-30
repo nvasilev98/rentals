@@ -1,6 +1,11 @@
 package rentals
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
+
+const withinMiles = 100
 
 func buildSQLQuery(query string, clauses map[string][]string) string {
 	return addPagination(addSorting(addWhereClause(query, clauses), clauses), clauses)
@@ -35,7 +40,16 @@ func addWhereClause(query string, clauses map[string][]string) string {
 		addedConditions++
 	}
 
-	// add near -> postgres formula for measuring distance by lat lng?
+	near, ok := clauses["near"]
+	if ok {
+		if addedConditions > 0 {
+			resultQuery = fmt.Sprintf("%s AND", resultQuery)
+		}
+		coordinates := strings.Split(near[0], ",")
+		distanceFormula := "%s (3959 * acos(cos(radians(%s)) * cos(radians(lat)) * cos(radians(lng) - radians(%s)) + sin(radians(%s)) * sin(radians(lat)))) < %d"
+		resultQuery = fmt.Sprintf(distanceFormula, resultQuery, coordinates[0], coordinates[1], coordinates[0], withinMiles)
+		addedConditions++
+	}
 
 	if addedConditions == 0 {
 		return query

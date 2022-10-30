@@ -10,6 +10,7 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/onsi/ginkgo/v2 v2.4.0
 	github.com/onsi/gomega v1.23.0
+	github.com/sirupsen/logrus v1.9.0
 )
 
 require (

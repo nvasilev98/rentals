@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nvasilev98/rentals/pkg/api"
 	"github.com/nvasilev98/rentals/pkg/repository/postgres/rentals"
+	"github.com/sirupsen/logrus"
 )
 
 //go:generate mockgen --source=presenter.go --destination mocks/presenter.go --package mocks
@@ -37,6 +38,7 @@ func (p *Presenter) RetrieveRentalByID(ctx *gin.Context) {
 
 	rental, err := p.rentalRepository.RetrieveRentalByID(ctx, id)
 	if err != nil {
+		logrus.Error("failed to retrieve rental by id from repository: ", err)
 		ctx.JSON(http.StatusInternalServerError, api.NewErrorResponse("failed to retrieve rental by id"))
 		return
 	}
@@ -49,6 +51,7 @@ func (p *Presenter) RetrieveRentals(ctx *gin.Context) {
 	queryParams := ctx.Request.URL.Query()
 	rentals, err := p.rentalRepository.RetrieveRentals(ctx, queryParams)
 	if err != nil {
+		logrus.Error("failed to retrieve rentals from repository: ", err)
 		ctx.JSON(http.StatusInternalServerError, api.NewErrorResponse("failed to retrieve rentals"))
 		return
 	}
