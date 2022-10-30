@@ -66,7 +66,33 @@ var _ = Describe("Rentals", func() {
 			})
 		})
 
-		//todo extend tests
-	})
+		When("retrieving a rental by a given id", func() {
+			testFields := []string{"r.id", "name", "description", "type", "vehicle_make", "vehicle_model", "vehicle_year",
+				"vehicle_length", "sleeps", "primary_image_url", "price_per_day", "home_city", "home_state",
+				"home_zip", "home_country", "lat", "lng", "user_id", "first_name", "last_name"}
+			expectedRental := rentals.Model{
+				ID: 1, Name: "name", Description: "description", Type: "type", VehicleMake: "maker",
+				VehicleModel: "model", VehicleYear: 2, VehicleLength: 123.3, Sleeps: 3, PrimaryImageURL: "URL",
+				PricePerDay: 10, HomeCity: "city", HomeState: "state", HomeZIP: "ZIP", HomeCountry: "country",
+				LAT: 123.2, LNG: 456.1, UserID: 3, FirstName: "first-name", LastName: "last-name"}
 
+			BeforeEach(func() {
+				mockRows := mock.NewRows(testFields).
+					AddRow(expectedRental.ID, expectedRental.Name, expectedRental.Description,
+						expectedRental.Type, expectedRental.VehicleMake, expectedRental.VehicleModel,
+						expectedRental.VehicleYear, expectedRental.VehicleLength, expectedRental.Sleeps,
+						expectedRental.PrimaryImageURL, expectedRental.PricePerDay, expectedRental.HomeCity,
+						expectedRental.HomeState, expectedRental.HomeZIP, expectedRental.HomeCountry,
+						expectedRental.LAT, expectedRental.LNG, expectedRental.UserID,
+						expectedRental.FirstName, expectedRental.LastName)
+				prepare.ExpectQuery().WithArgs(sqlmock.AnyArg()).WillReturnRows(mockRows)
+			})
+
+			It("should succeeds", func() {
+				rental, err := repository.RetrieveRentalByID(ctx, "1")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(rental).To(Equal(expectedRental))
+			})
+		})
+	})
 })

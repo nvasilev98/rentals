@@ -35,6 +35,8 @@ func addWhereClause(query string, clauses map[string][]string) string {
 		addedConditions++
 	}
 
+	// add near -> postgres formula for lat lng?
+
 	if addedConditions == 0 {
 		return query
 	}

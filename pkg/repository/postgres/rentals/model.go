@@ -7,7 +7,7 @@ type Model struct {
 	Type            string
 	VehicleMake     string
 	VehicleModel    string
-	VehicleYear     string
+	VehicleYear     int
 	VehicleLength   float32
 	Sleeps          int
 	PrimaryImageURL string
