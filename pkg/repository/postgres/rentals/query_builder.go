@@ -35,7 +35,7 @@ func addWhereClause(query string, clauses map[string][]string) string {
 		addedConditions++
 	}
 
-	// add near -> postgres formula measuring distance for lat lng?
+	// add near -> postgres formula for measuring distance by lat lng?
 
 	if addedConditions == 0 {
 		return query
@@ -73,10 +73,10 @@ func addSorting(query string, clauses map[string][]string) string {
 }
 
 func toDBColumnName(key string) (string, bool) {
+	//supports price and year sorting, adding more columns will extend sorting options
 	columns := map[string]string{
 		"price": "price_per_day",
 		"year":  "vehicle_year",
-		//add more column names to match passed values...
 	}
 	dbColumnName, ok := columns[key]
 
