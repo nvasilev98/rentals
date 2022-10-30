@@ -58,17 +58,25 @@ func addPagination(query string, clauses map[string][]string) string {
 }
 
 func addSorting(query string, clauses map[string][]string) string {
-	//add column names to match passed values
-	columnName := map[string]string{
-		"price": "price_per_day",
-		"year":  "vehicle_year",
-	}
-
 	resultQuery := query
 	sort, ok := clauses["sort"]
 	if ok {
-		resultQuery = fmt.Sprintf("%s ORDER BY %s", resultQuery, columnName[sort[0]])
+		// if the column does not exist, a order by clause will not be added
+		if column, ok := toDBColumnName(sort[0]); ok {
+			resultQuery = fmt.Sprintf("%s ORDER BY %s", resultQuery, column)
+		}
 	}
 
 	return resultQuery
+}
+
+func toDBColumnName(key string) (string, bool) {
+	columns := map[string]string{
+		"price": "price_per_day",
+		"year":  "vehicle_year",
+		//add more column names to match passed values...
+	}
+	dbColumnName, ok := columns[key]
+
+	return dbColumnName, ok
 }

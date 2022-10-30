@@ -44,6 +44,7 @@ func (p *Presenter) RetrieveRentalByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, toRentalResponse(rental))
 }
 
+// RetrieveRentals retrieves filtered, sorted or paginated rentals by passing query parameters
 func (p *Presenter) RetrieveRentals(ctx *gin.Context) {
 	queryParams := ctx.Request.URL.Query()
 	rentals, err := p.rentalRepository.RetrieveRentals(ctx, queryParams)
