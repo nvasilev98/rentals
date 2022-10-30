@@ -90,4 +90,40 @@ var _ = Describe("Presenter", func() {
 			Expect(rentalResp.Name).To(Equal(name))
 		})
 	})
+
+	When("retrieving rentals from repository fails", func() {
+		BeforeEach(func() {
+			mockContext.Request, _ = http.NewRequest(http.MethodGet, gomock.Any().String(), nil)
+			mockRentalRepo.EXPECT().RetrieveRentals(gomock.Any(), gomock.Any()).Return([]r.Model{}, errors.New("err"))
+		})
+
+		It("should return http.StatusInternalServerError code", func() {
+			presenter.RetrieveRentals(mockContext)
+			Expect(mockContext.Writer.Status()).To(Equal(http.StatusInternalServerError))
+			errResp := api.ErrorResponse{}
+			Expect(json.Unmarshal(recorder.Body.Bytes(), &errResp)).To(Succeed())
+			Expect(errResp.Error.Message).To(Equal("failed to retrieve rentals"))
+		})
+	})
+
+	When("retrieving rentals succeeds", func() {
+		const (
+			id   = 1
+			name = "test"
+		)
+
+		BeforeEach(func() {
+			mockContext.Request, _ = http.NewRequest(http.MethodGet, gomock.Any().String(), nil)
+			mockRentalRepo.EXPECT().RetrieveRentals(gomock.Any(), gomock.Any()).Return([]r.Model{{ID: id, Name: name}}, nil)
+		})
+
+		It("should return http.StatusOK code", func() {
+			presenter.RetrieveRentals(mockContext)
+			Expect(mockContext.Writer.Status()).To(Equal(http.StatusOK))
+			rentalResp := rentals.RentalsResponse{}
+			Expect(json.Unmarshal(recorder.Body.Bytes(), &rentalResp)).To(Succeed())
+			Expect(rentalResp.Rentals[0].ID).To(Equal(id))
+			Expect(rentalResp.Rentals[0].Name).To(Equal(name))
+		})
+	})
 })

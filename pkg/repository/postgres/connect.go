@@ -7,7 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// Connect establish connection to a DB with a given configuration
+// Connect establishes a connection to a DB with a given configuration
 func Connect(cfg Config) (*sql.DB, error) {
 	postgres, err := sql.Open("postgres", fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=disable",

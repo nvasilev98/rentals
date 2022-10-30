@@ -16,6 +16,10 @@ type RentalResponse struct {
 	User            UserResponse     `json:"user"`
 }
 
+type RentalsResponse struct {
+	Rentals []RentalResponse `json:"rentals"`
+}
+
 type PriceResponse struct {
 	Day int `json:"day"`
 }

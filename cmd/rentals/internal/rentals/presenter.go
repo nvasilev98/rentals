@@ -2,7 +2,6 @@ package rentals
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -49,12 +48,11 @@ func (p *Presenter) RetrieveRentals(ctx *gin.Context) {
 	queryParams := ctx.Request.URL.Query()
 	rentals, err := p.rentalRepository.RetrieveRentals(ctx, queryParams)
 	if err != nil {
-		fmt.Print(err)
 		ctx.JSON(http.StatusInternalServerError, api.NewErrorResponse("failed to retrieve rentals"))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, rentals)
+	ctx.JSON(http.StatusOK, toRentalsResponse(rentals))
 }
 
 func toRentalResponse(rental rentals.Model) RentalResponse {
@@ -87,5 +85,16 @@ func toRentalResponse(rental rentals.Model) RentalResponse {
 		Price:           price,
 		Location:        location,
 		User:            user,
+	}
+}
+
+func toRentalsResponse(rentals []rentals.Model) RentalsResponse {
+	rentalsResponse := make([]RentalResponse, 0)
+	for _, rental := range rentals {
+		rentalsResponse = append(rentalsResponse, toRentalResponse(rental))
+	}
+
+	return RentalsResponse{
+		Rentals: rentalsResponse,
 	}
 }
