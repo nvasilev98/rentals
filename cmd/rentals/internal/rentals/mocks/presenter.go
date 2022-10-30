@@ -49,3 +49,18 @@ func (mr *MockRentalRepositoryMockRecorder) RetrieveRentalByID(ctx, id interface
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RetrieveRentalByID", reflect.TypeOf((*MockRentalRepository)(nil).RetrieveRentalByID), ctx, id)
 }
+
+// RetrieveRentals mocks base method.
+func (m *MockRentalRepository) RetrieveRentals(ctx context.Context, query map[string][]string) ([]rentals.Model, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RetrieveRentals", ctx, query)
+	ret0, _ := ret[0].([]rentals.Model)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RetrieveRentals indicates an expected call of RetrieveRentals.
+func (mr *MockRentalRepositoryMockRecorder) RetrieveRentals(ctx, query interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RetrieveRentals", reflect.TypeOf((*MockRentalRepository)(nil).RetrieveRentals), ctx, query)
+}

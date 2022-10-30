@@ -34,7 +34,8 @@ func main() {
 	handler := gin.Default()
 	presenter := rentals.NewPresenter(rentalsRepository)
 
-	handler.GET("/rental/:id", presenter.RetrieveRentalByID)
+	handler.GET("/rentals/:id", presenter.RetrieveRentalByID)
+	handler.GET("/rentals", presenter.RetrieveRentals)
 
 	httpServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", 8080),

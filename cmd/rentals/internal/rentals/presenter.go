@@ -14,6 +14,7 @@ import (
 
 type RentalRepository interface {
 	RetrieveRentalByID(ctx context.Context, id string) (rentals.Model, error)
+	RetrieveRentals(ctx context.Context, query map[string][]string) ([]rentals.Model, error)
 }
 
 type Presenter struct {
@@ -37,12 +38,23 @@ func (p *Presenter) RetrieveRentalByID(ctx *gin.Context) {
 
 	rental, err := p.rentalRepository.RetrieveRentalByID(ctx, id)
 	if err != nil {
-		fmt.Println(err)
 		ctx.JSON(http.StatusInternalServerError, api.NewErrorResponse("failed to retrieve rental by id"))
 		return
 	}
 
 	ctx.JSON(http.StatusOK, toRentalResponse(rental))
+}
+
+func (p *Presenter) RetrieveRentals(ctx *gin.Context) {
+	queryParams := ctx.Request.URL.Query()
+	rentals, err := p.rentalRepository.RetrieveRentals(ctx, queryParams)
+	if err != nil {
+		fmt.Print(err)
+		ctx.JSON(http.StatusInternalServerError, api.NewErrorResponse("failed to retrieve rentals"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, rentals)
 }
 
 func toRentalResponse(rental rentals.Model) RentalResponse {
