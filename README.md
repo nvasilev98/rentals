@@ -19,7 +19,7 @@ make unit-tests
 
     export DB_NAME=<db-name>
     ```
-2. Spin up database
+2. Spin up database in a separate session
 
     ```bash
     docker compose up
