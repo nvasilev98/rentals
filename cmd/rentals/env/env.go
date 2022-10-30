@@ -11,6 +11,7 @@ type AppConfig struct {
 	Port int    `envconfig:"PORT" default:"8080"`
 }
 
+// LoadAppConfig is loading the application config provided in the environment
 func LoadAppConfig() (AppConfig, error) {
 	var config AppConfig
 	if err := envconfig.Process("", &config); err != nil {
