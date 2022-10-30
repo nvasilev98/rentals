@@ -7,7 +7,7 @@ type RentalResponse struct {
 	Type            string           `json:"type"`
 	VehicleMake     string           `json:"make"`
 	VehicleModel    string           `json:"model"`
-	VehicleYear     string           `json:"year"`
+	VehicleYear     int              `json:"year"`
 	VehicleLength   float32          `json:"length"`
 	Sleeps          int              `json:"sleeps"`
 	PrimaryImageURL string           `json:"primary_image_url"`
